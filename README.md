@@ -8,9 +8,9 @@ fixes the axes along which their results are compared, so that numbers from diff
 papers can finally be placed on a single picture.
 
 > Companion to the survey *"Breaking the Memory Wall: A Survey of Key-Value Cache
-> Compression, Architecture, and System Design for Large Language Model Inference"*
-> (Artificial Intelligence Review, under review). See **Section 10** of the paper for
-> the protocol specification.
+> Compression for Large Language Model Inference and the Matched-Budget Evaluation
+> Protocol"* (Artificial Intelligence Review, under review). See **Section 10** of the
+> paper for the protocol specification.
 
 ---
 
