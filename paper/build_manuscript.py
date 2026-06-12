@@ -161,7 +161,7 @@ P("Self-attention introduced a different constraint. The dense attention operati
   f"models such as BERT ({C['devlin2019bert']}) and the first GPT models restricted "
   "the context window to a few hundred tokens. Subsequent algorithmic and systems "
   "advances, together with the demands of retrieval-augmented generation, document "
-  "analysis, and agentic applications, together with positional-extrapolation "
+  "analysis, and agentic applications, and aided by positional-extrapolation "
   f"techniques ({C['peng2024yarn']}; {C['ding2024longrope']}), have extended "
   "production context windows to hundreds of thousands of tokens. This expansion enables "
   "new applications but imposes severe constraints on inference hardware, because "
@@ -232,20 +232,19 @@ P("Several recent surveys address KV cache optimisation, and we state our distin
   "closest in spirit to our hardware framing, though it treats LLM inference broadly "
   "rather than centring the KV cache. Table 1 positions the present survey against "
   "the KV-cache-specific works.")
-P("This survey is differentiated along four axes. First, it adopts a hardware-first "
-  "organisation in which every algorithmic, architectural, and system technique is "
-  "tied back to the roofline and memory-traffic analysis of Section 3, and it treats "
-  "the four optimisation layers under a single co-design and Pareto-frontier "
-  "framework that makes the interference between stacked methods explicit (Section "
-  "8). Second, it consolidates the rapidly growing evidence on KV cache security in "
-  "multi-tenant serving, including prefix-sharing side channels and prompt-leakage "
-  "attacks, which prior KV-cache surveys omit (Sections 6.2 and 9.4). Third, it "
-  "analyses degradation modes specific to long-horizon agentic loops and the "
-  "benchmarking deficit that conceals them (Sections 9.2 and 9.3). Fourth, and "
-  "uniquely among surveys in this area, it converts that benchmarking critique into a "
-  "concrete remedy: the Matched-Budget Evaluation protocol and its open harness "
-  "(Section 10), so that the survey contributes an adoptable artifact rather than "
-  "only a synthesis.")
+P("Four things set this survey apart. Its organisation is hardware-first: every "
+  "algorithmic, architectural, and system technique is tied back to the roofline and "
+  "memory-traffic analysis of Section 3, and the four optimisation layers are read "
+  "under one co-design and Pareto-frontier framing that makes the interference "
+  "between stacked methods explicit (Section 8). It also consolidates the fast-growing "
+  "evidence on KV cache security in multi-tenant serving, from prefix-sharing side "
+  "channels to prompt-leakage attacks, which prior KV-cache surveys leave out "
+  "(Sections 6.2 and 9.4), and it analyses the degradation modes specific to "
+  "long-horizon agentic loops and the benchmarking deficit that hides them (Sections "
+  "9.2 and 9.3). Most distinctively, it does not stop at the critique: the "
+  "Matched-Budget Evaluation protocol and its open harness (Section 10) turn that "
+  "critique into an artifact others can adopt, which no prior survey in this area "
+  "offers.")
 
 make_table(
     headers=["Survey (year)", "Primary taxonomy / angle", "HW / PIM", "Co-design", "Security", "Agentic", "Eval protocol"],
@@ -317,9 +316,9 @@ P("Sources were identified through three complementary channels, with a search "
   "quality, and 178 retained for detailed analysis and inclusion. The counts are "
   "approximate because the field is fast-moving and many methods appear concurrently "
   "as preprints and archival papers; the intent is reproducible coverage rather than "
-  "exhaustive enumeration of an actively growing literature. Of the 198 references in "
+  "exhaustive enumeration of an actively growing literature. Of the 209 references in "
   "this survey, 178 are KV-cache methods or systems analysed in depth; the remaining "
-  "20 are seminal or background works (for example, foundational attention, the "
+  "31 are seminal or background works (for example, foundational attention, the "
   "memory wall, and the competing surveys) cited for context.")
 try:
     doc.add_picture("prisma_figure.png", width=Inches(4.7))
@@ -803,9 +802,9 @@ P("Prefix sharing improves efficiency but weakens tenant isolation, and a growin
   f"Because a cache hit on a shared prefix is faster than a miss, an adversary who "
   "probes response times can infer whether a prefix is cached and reconstruct other "
   f"users' prompts token by token. PROMPTPEEK ({C['wu2025promptpeek']}) demonstrates "
-  "prompt reconstruction against multi-tenant serving frameworks, and timing "
-  f"side-channel attacks on KV and semantic caches ({C['song2024earlybird']}) and "
-  f"audits of deployed APIs ({C['gu2025auditing']}) and input-stealing timing "
+  "prompt reconstruction against multi-tenant serving frameworks; timing "
+  f"side-channel attacks on KV and semantic caches ({C['song2024earlybird']}), "
+  f"audits of deployed APIs ({C['gu2025auditing']}), and input-stealing timing "
   f"attacks ({C['zheng2024inputsnatch']}) confirm the leakage is "
   f"realistic across commercial providers. Direct reconstruction from the cache "
   f"itself has also been shown ({C['luo2025shadow']}). Proposed mitigations include "
@@ -1295,14 +1294,15 @@ P("The trajectory of large language model deployment is bound by the memory "
   "scaling inference is purely a compute problem: while prefill is compute-bound, "
   "autoregressive decoding is governed by the memory wall, and the KV cache is the "
   "object that turns generation from a compute-bound into a bandwidth-bound task.")
-P("We surveyed four complementary layers of mitigation. Algorithmic methods - "
-  "low-precision quantization, attention-guided eviction, and structural merging - "
-  "reduce the stored or moved bytes within the existing architecture. Architectural "
-  "methods - grouped-query and latent attention, and recurrent or hybrid state-space "
-  "models - bound the cache by construction. System methods - paged virtual memory, "
-  "prefix sharing, and tiered offloading - raise utilisation and extend effective "
-  "capacity. Hardware methods - decoding-optimised kernels, fusion, and "
-  "processing-in-memory - attack the bandwidth limit at the silicon level. These are "
+P("We surveyed four complementary layers of mitigation. Algorithmic methods, namely "
+  "low-precision quantization, attention-guided eviction, and structural merging, "
+  "reduce the bytes stored or moved within the existing architecture. Architectural "
+  "methods such as grouped-query and latent attention, and recurrent or hybrid "
+  "state-space models, bound the cache by construction instead. System methods raise "
+  "utilisation and extend effective capacity through paged virtual memory, prefix "
+  "sharing, and tiered offloading. Hardware methods attack the bandwidth limit at the "
+  "silicon level, from decoding-optimised kernels and fusion to processing-in-memory. "
+  "These are "
   "complementary to compute-reduction techniques such as sparsely activated "
   f"mixture-of-experts models ({C['jiang2024mixtral']}), which lower active "
   "computation but not the KV cache and therefore leave the memory wall in place. No "
@@ -1331,7 +1331,7 @@ labelled("Competing interests.", "The author has no relevant financial or non-fi
 labelled("Data availability.", "No new datasets were generated. The Matched-Budget Evaluation (MBE) protocol specification, the open evaluation harness, the KV Compression Card template, and the seed reference results described in Section 10 are released in a public repository at https://github.com/rohithreddybc/mbe-protocol, with the evaluation manifest and reference cards also published as a dataset at https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache; all other works discussed are cited and publicly available.")
 labelled("Ethics approval.", "Not applicable. This review does not involve human participants, their data, or animals.")
 labelled("Author contributions.", "R.R. is the sole author and is responsible for the conception, literature analysis, software (the MBE harness), visualisation, and writing of the manuscript (CRediT: Conceptualization, Investigation, Software, Visualization, Writing - original draft, Writing - review & editing).")
-labelled("Use of AI tools.", "Any use of generative AI tools was limited to language editing and reference organisation; all technical content, analysis, and conclusions are the authors' own and were verified against primary sources.")
+labelled("Use of AI tools.", "Generative AI tools were used to assist with drafting, language editing, and reference organisation; the author directed the work, takes full responsibility for all technical content, analysis, and conclusions, and verified every claim and citation against primary sources. No AI system is listed as an author. The disclosure follows the journal's policy on AI use and should be adjusted by the author to match their actual process.")
 
 # =====================================================================
 # REFERENCES
