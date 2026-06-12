@@ -19,11 +19,25 @@ Efficient Large Language Model (LLM) Inference
   response-to-anticipated-reviewers.
 - `REVISION_NOTES.md` — full revision history, acceptance scoring, and remaining tasks.
 
-## Reproduce
+## Reproduce (one command, cross-platform, deterministic)
 ```bash
-pip install python-docx matplotlib
-python build_manuscript.py   # writes the .docx; convert to PDF with Word/LibreOffice
+pip install -r requirements.txt
+python build.py     # regenerates all figures -> .docx -> PDF (if Word/LibreOffice present)
 ```
+`build.py` runs the figure generators (`make_*.py`) **then** `build_manuscript.py` in the
+correct order. Running `build_manuscript.py` alone produces a figure-less draft, since it
+embeds the PNGs the figure scripts create. PDF export uses `docx2pdf` (needs Word) or
+LibreOffice headless; without either, open the `.docx` and "Save as PDF".
+
+The figure data is itself reproducible: `make_trends.py` computes Fig. 3 directly from
+`references.py`, and `make_pareto.py` plots the author-reported points of Table 5. The
+reference list (`references.py`) is the single source of truth for all citations.
+
+## Reproduce the empirical results
+The MBE seed numbers come from `../eval/run_seed.py` (deterministic: `torch.manual_seed(0)`).
+The 0.5B CPU run reproduces on any machine with `torch` + `transformers`; the 7-8B run is a
+one-click Colab (see the repository root README). Results can vary slightly with the
+`transformers` version due to attention/tokenizer changes; pin versions for exact numbers.
 
 ## Status / remaining work
 See `REVISION_NOTES.md` and `submission/SUBMISSION_CHECKLIST.md`. The main open item is

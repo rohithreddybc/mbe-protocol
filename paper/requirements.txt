@@ -1,0 +1,6 @@
+# Manuscript build (deterministic; no GPU needed)
+python-docx>=1.1.0
+matplotlib>=3.7
+# Optional, for cross-platform PDF export (else use Word/LibreOffice manually):
+# docx2pdf>=0.1.8        # needs Microsoft Word (Windows/macOS)
+# or install LibreOffice and `python build.py` will use it headlessly
