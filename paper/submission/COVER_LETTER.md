@@ -59,5 +59,5 @@ itself.
 Thank you for your consideration.
 
 Sincerely,
-Rohith Reddy B. C. (corresponding author)
+Rohith Reddy B. C. (corresponding author), on behalf of all authors
 [Affiliation] · rohithreddybc98@gmail.com

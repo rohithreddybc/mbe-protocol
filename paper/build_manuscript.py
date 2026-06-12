@@ -102,9 +102,13 @@ for run in title.runs:
     run.font.size = Pt(16)
 
 # Artificial Intelligence Review is single-blind: authors are named on the title page.
-centered("Rohith Reddy B. C.", bold=True, size=12)
-centered("[Department], [Institution], [City], [Country]", italic=True, size=10)
-centered("Corresponding author: rohithreddybc98@gmail.com  ·  ORCID: 0000-0000-0000-0000", italic=True, size=10)
+centered("Rohith Reddy B. C.¹  ·  [Author 2]²  ·  [Author 3]³  ·  [Author 4]⁴",
+         bold=True, size=12)
+centered("¹[Department], [Institution], [City], [Country]   "
+         "²[Affiliation 2]   ³[Affiliation 3]   ⁴[Affiliation 4]",
+         italic=True, size=10)
+centered("Corresponding author: Rohith Reddy B. C., rohithreddybc98@gmail.com  ·  "
+         "ORCID: [add ORCID for each author]", italic=True, size=10)
 doc.add_paragraph()
 
 # =====================================================================
@@ -1326,12 +1330,12 @@ P("Two concerns deserve sustained attention as the field advances. Multi-tenant 
 # DECLARATIONS
 # =====================================================================
 H1("Declarations")
-labelled("Funding.", "The author declares that no funds, grants, or other support were received during the preparation of this manuscript.")
-labelled("Competing interests.", "The author has no relevant financial or non-financial interests to disclose.")
+labelled("Funding.", "The authors declare that no funds, grants, or other support were received during the preparation of this manuscript.")
+labelled("Competing interests.", "The authors have no relevant financial or non-financial interests to disclose.")
 labelled("Data availability.", "No new datasets were generated. The Matched-Budget Evaluation (MBE) protocol specification, the open evaluation harness, the KV Compression Card template, and the seed reference results described in Section 10 are released in a public repository at https://github.com/rohithreddybc/mbe-protocol, with the evaluation manifest and reference cards also published as a dataset at https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache; all other works discussed are cited and publicly available.")
 labelled("Ethics approval.", "Not applicable. This review does not involve human participants, their data, or animals.")
-labelled("Author contributions.", "R.R. is the sole author and is responsible for the conception, literature analysis, software (the MBE harness), visualisation, and writing of the manuscript (CRediT: Conceptualization, Investigation, Software, Visualization, Writing - original draft, Writing - review & editing).")
-labelled("Use of AI tools.", "Generative AI tools were used to assist with drafting, language editing, and reference organisation; the author directed the work, takes full responsibility for all technical content, analysis, and conclusions, and verified every claim and citation against primary sources. No AI system is listed as an author. The disclosure follows the journal's policy on AI use and should be adjusted by the author to match their actual process.")
+labelled("Author contributions.", "All authors contributed to the conception and design of the survey and approved the final manuscript. [Assign CRediT roles per author, e.g.: R.R.B.C. - Conceptualization, Investigation, Software (the MBE harness), Visualization, Writing - original draft; Author 2 - Investigation, Writing - review & editing; Author 3 - Investigation, Validation; Author 4 - Supervision, Writing - review & editing.]")
+labelled("Use of AI tools.", "Generative AI tools were used to assist with drafting, language editing, and reference organisation; the authors directed the work, take full responsibility for all technical content, analysis, and conclusions, and verified every claim and citation against primary sources. No AI system is listed as an author. The disclosure follows the journal's policy on AI use and should be adjusted by the authors to match their actual process.")
 
 # =====================================================================
 # REFERENCES

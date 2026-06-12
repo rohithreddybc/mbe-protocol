@@ -4,8 +4,14 @@ title: "Breaking the Memory Wall: A Survey of Key-Value (KV) Cache Compression f
 abstract: "Survey of KV cache compression for LLM inference, introducing the Matched-Budget Evaluation (MBE) protocol for standardized, fixed-budget reporting."
 authors:
   - given-names: "Rohith"
-    family-names: "Reddy"
+    family-names: "Reddy B. C."
     alias: "rohithreddybc"
+  - given-names: "[Author 2 given name]"
+    family-names: "[Author 2 family name]"
+  - given-names: "[Author 3 given name]"
+    family-names: "[Author 3 family name]"
+  - given-names: "[Author 4 given name]"
+    family-names: "[Author 4 family name]"
 year: 2026
 journal: "Artificial Intelligence Review"
 repository-code: "https://github.com/rohithreddybc/mbe-protocol"
