@@ -28,7 +28,39 @@ MODEL = os.environ.get("MBE_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
 N = int(os.environ.get("MBE_N", "8"))
 BUDGETS = [0.25, 0.125]
 SINK = 4
+LOAD_4BIT = os.environ.get("MBE_LOAD_4BIT", "0") == "1"   # set 1 to fit 7-8B on a 16GB GPU
+SKIP_H2O = os.environ.get("MBE_SKIP_H2O", "0") == "1"     # H2O needs output_attentions (memory)
+USER_METHOD = os.environ.get("MBE_USER_METHOD")          # path to a .py exposing
+#   def compress(legacy_cache, seqlen, budget, attn_importance) -> legacy_cache
+#   (legacy_cache is a tuple of (key, value) per layer; quantize/evict and return it).
+USER_NAME = os.environ.get("MBE_USER_NAME", "user-method")
+
+
+def _load_user_compress():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("user_method", USER_METHOD)
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    return m.compress
+USE_CUDA = torch.cuda.is_available()
+DEVICE = "cuda" if USE_CUDA else "cpu"
 torch.manual_seed(0)
+
+
+def load_model_tok():
+    tok = AutoTokenizer.from_pretrained(MODEL)
+    kwargs = dict(attn_implementation="eager")
+    if LOAD_4BIT:
+        from transformers import BitsAndBytesConfig
+        kwargs["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16, bnb_4bit_quant_type="nf4")
+        kwargs["device_map"] = "auto"
+    else:
+        kwargs["dtype"] = torch.float16 if USE_CUDA else torch.float32
+    model = AutoModelForCausalLM.from_pretrained(MODEL, **kwargs)
+    if not LOAD_4BIT and USE_CUDA:
+        model = model.to("cuda")
+    model.eval()
+    return model, tok
 
 
 def make_sample(i, n_fillers=45):
@@ -79,26 +111,32 @@ def evict_cache(cache, idx):
 
 
 @torch.no_grad()
-def run(model, tok, method, budget):
+def run(model, tok, method, budget, user_compress=None):
     correct = 0
-    need_attn = (method == "h2o")
+    need_attn = method in ("h2o", "user")
     for i in range(N):
         key, msg = make_sample(i)
         ids = tok.apply_chat_template(msg, add_generation_prompt=True, return_tensors="pt")
+        ids = ids.to(model.device)
         seqlen = ids.shape[1]
         out = model(ids, use_cache=True, output_attentions=need_attn)
         legacy = list(out.past_key_values.to_legacy_cache())
 
         if method == "kivi-4bit":
             legacy = list(quantize_cache(legacy, 4))
+        elif method == "user":
+            imp = torch.zeros(seqlen)
+            for a in out.attentions:
+                imp += a[0].sum(dim=(0, 1))[:seqlen].float().cpu()
+            legacy = list(user_compress(tuple(legacy), seqlen, budget, imp))
         elif method in ("streaming", "h2o"):
             imp = None
             if need_attn:
                 # token importance = attention received, summed over layers/heads/queries
                 imp = torch.zeros(seqlen)
                 for a in out.attentions:            # a: [b, heads, q, kv]
-                    imp += a[0].sum(dim=(0, 1))[:seqlen].float()
-            idx = select_indices(method, seqlen, budget, imp)
+                    imp += a[0].sum(dim=(0, 1))[:seqlen].float().cpu()
+            idx = select_indices(method, seqlen, budget, imp).to(model.device)
             legacy = list(evict_cache(legacy, idx))
 
         cache = DynamicCache.from_legacy_cache(tuple(legacy))
@@ -107,7 +145,7 @@ def run(model, tok, method, budget):
         pos = seqlen                                 # TRUE position of first generated token
         for _ in range(8):
             o = model(next_id, past_key_values=cache, use_cache=True,
-                      position_ids=torch.tensor([[pos]]))
+                      position_ids=torch.tensor([[pos]], device=model.device))
             cache = o.past_key_values
             next_id = o.logits[:, -1].argmax(-1, keepdim=True)
             gen.append(next_id.item()); pos += 1
@@ -118,36 +156,43 @@ def run(model, tok, method, budget):
 
 
 def main():
-    print(f"Loading {MODEL} ...", flush=True)
-    tok = AutoTokenizer.from_pretrained(MODEL)
-    model = AutoModelForCausalLM.from_pretrained(
-        MODEL, torch_dtype=torch.float32, attn_implementation="eager")
-    model.eval()
-
+    print(f"Loading {MODEL}  (device={DEVICE}, 4bit={LOAD_4BIT}) ...", flush=True)
+    model, tok = load_model_tok()
+    user_compress = _load_user_compress() if USER_METHOD else None
+    if USER_METHOD:
+        methods = ["user"]                       # evaluate only the user's method (+ full baseline)
+        print(f"Evaluating user method '{USER_NAME}' from {USER_METHOD}", flush=True)
+    else:
+        methods = ["kivi-4bit", "streaming"] + ([] if SKIP_H2O else ["h2o"])
     configs = [("full", None)]
-    for m in ["kivi-4bit", "streaming", "h2o"]:
+    for m in methods:
         for b in BUDGETS:
             configs.append((m, b))
 
     rows = []
     for method, budget in configs:
-        acc = run(model, tok, method, budget)
+        acc = run(model, tok, method, budget, user_compress)
+        method_label = USER_NAME if method == "user" else method
         b = "100%" if budget is None else f"{int(budget*100*10)/10}%"
-        print(f"  {method:12s} budget={b:6s} -> passkey acc {acc:.3f}", flush=True)
-        rows.append({"method": method, "kv_budget": b, "passkey_acc": round(acc, 3)})
+        print(f"  {method_label:14s} budget={b:6s} -> passkey acc {acc:.3f}", flush=True)
+        rows.append({"method": method_label, "kv_budget": b, "passkey_acc": round(acc, 3)})
 
+    safe_model = MODEL.split("/")[-1].lower()
     card = {
         "harness_version": "mbe-0.2.0",
-        "run_type": "CPU seed run (proof-of-concept across families, NOT the 7-8B suite)",
-        "model": MODEL, "model_size": "0.5B (GQA)",
+        "run_type": ("GPU" if USE_CUDA else "CPU") + (" user-method run" if USER_METHOD else " seed run across families"),
+        "model": MODEL,
         "task": "passkey retrieval (synthetic, single needle)",
-        "n_samples": N, "hardware": "CPU / float32",
-        "families": "quantization (KIVI) + eviction (StreamingLLM sink+window, H2O heavy-hitter)",
+        "n_samples": N,
+        "hardware": (DEVICE + (" / 4-bit weights" if LOAD_4BIT else " / fp16" if USE_CUDA else " / float32")),
+        "families": (USER_NAME if USER_METHOD else
+                     "quantization (KIVI) + eviction (StreamingLLM sink+window, H2O heavy-hitter)"),
         "results": rows,
     }
     outdir = os.path.join(os.path.dirname(__file__), "..", "cards")
     os.makedirs(outdir, exist_ok=True)
-    out = os.path.join(outdir, "seed_multimethod_qwen2.5-0.5b.json")
+    tag = (USER_NAME.replace(" ", "-").replace("/", "-") if USER_METHOD else "seed_multimethod")
+    out = os.path.join(outdir, f"{tag}_{safe_model}.json")
     json.dump(card, open(out, "w"), indent=2)
     print("Wrote", out, flush=True)
 
