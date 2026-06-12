@@ -1261,11 +1261,15 @@ P("To lower the barrier to adoption, the protocol is released as an open, "
   "author-reported figures of Tables 4 and 5; at the time of writing the harness and "
   "templates are released and the seed run is in progress, with cells reported only "
   "once measured. As an end-to-end validation, a small CPU proof-of-concept on a "
-  "0.5-billion-parameter grouped-query model reproduces the expected behaviour of the "
-  "quantization family under matched budgets: eight- and four-bit key-value caches are "
-  "lossless on single-needle retrieval, whereas two-bit caches collapse, consistent "
-  "with the fragility discussed in Section 4.1.3; this is a functionality check, not "
-  "the model-scale result, which the seed run on the full suite will provide. "
+  "0.5-billion-parameter grouped-query model, comparing a quantization method against "
+  "two eviction methods at matched budgets on single-needle retrieval, behaves as "
+  "expected: four-bit KIVI-style quantization, which retains every token, is lossless, "
+  "while budget-constrained eviction (attention-sink-plus-window, and a simplified "
+  "heavy-hitter scheme) drops the mid-context needle and fails the task. This matches "
+  "the known weakness of accumulated-attention eviction on retrieval that motivates "
+  "the query-aware and value-aware methods of Section 4.2. These are deliberately "
+  "simple reference implementations on a single-needle task: a functionality check, "
+  "not the model-scale result that the seed run on the full suite will provide. "
   "External methods are added by submitting a card, so the comparison "
   "stays current as the field moves. We position MBE not as a final answer but as a "
   "minimal, adoptable convention whose value grows with participation, and whose axes "
@@ -1332,7 +1336,7 @@ P("Two concerns deserve sustained attention as the field advances. Multi-tenant 
 H1("Declarations")
 labelled("Funding.", "The authors declare that no funds, grants, or other support were received during the preparation of this manuscript.")
 labelled("Competing interests.", "The authors have no relevant financial or non-financial interests to disclose.")
-labelled("Data availability.", "No new datasets were generated. The Matched-Budget Evaluation (MBE) protocol specification, the open evaluation harness, the KV Compression Card template, and the seed reference results described in Section 10 are released in a public repository at https://github.com/rohithreddybc/mbe-protocol, with the evaluation manifest and reference cards also published as a dataset at https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache; all other works discussed are cited and publicly available.")
+labelled("Data availability.", "No new datasets were generated. The Matched-Budget Evaluation (MBE) protocol specification, the open evaluation harness, the KV Compression Card template, and the seed reference results described in Section 10 are released in a public repository at https://github.com/rohithreddybc/mbe-protocol, with the evaluation manifest and reference cards also published as a dataset at https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache and a live leaderboard at https://huggingface.co/spaces/Rohithreddybc/mbe-leaderboard; all other works discussed are cited and publicly available.")
 labelled("Ethics approval.", "Not applicable. This review does not involve human participants, their data, or animals.")
 labelled("Author contributions.", "All authors contributed to the conception and design of the survey and approved the final manuscript. [Assign CRediT roles per author, e.g.: R.R.B.C. - Conceptualization, Investigation, Software (the MBE harness), Visualization, Writing - original draft; Author 2 - Investigation, Writing - review & editing; Author 3 - Investigation, Validation; Author 4 - Supervision, Writing - review & editing.]")
 labelled("Use of AI tools.", "Generative AI tools were used to assist with drafting, language editing, and reference organisation; the authors directed the work, take full responsibility for all technical content, analysis, and conclusions, and verified every claim and citation against primary sources. No AI system is listed as an author. The disclosure follows the journal's policy on AI use and should be adjusted by the authors to match their actual process.")

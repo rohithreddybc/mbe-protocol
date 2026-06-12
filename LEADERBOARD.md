@@ -5,24 +5,30 @@ Auto-generated from `cards/*.json`. Each row is a reproducible KV Compression Ca
 
 ---
 
-## Proof-of-concept run (CPU smoke test) — REAL numbers
+## Seed run (CPU, multi-method) — REAL numbers
 
-> Produced by `eval/smoke_quant.py` on **Qwen2.5-0.5B-Instruct (GQA), CPU/float32**,
-> passkey retrieval, N=10. This is a **proof-of-concept that the harness runs
-> end-to-end and produces matched-budget numbers** — it is **not** the paper's 7-8B
-> suite. KV quantization is KIVI-style (per-channel keys, per-token values), applied to
-> the prefill cache.
+> Produced by `eval/run_seed.py` on **Qwen2.5-0.5B-Instruct (GQA), CPU/float32**,
+> passkey retrieval (single mid-context needle), N=8. A **proof-of-concept across
+> compression families** at matched budgets — **not** the paper's 7-8B suite. The
+> eviction adapters keep a subset of the prefill cache with correct RoPE positions;
+> decode passes true position ids. These are deliberately simple reference
+> implementations.
 
-| Method  | KV budget | Passkey accuracy |
-|---------|:---------:|:----------------:|
-| full-FP |   100%    |       1.00       |
-| KV-8bit |   50%     |       1.00       |
-| KV-4bit |   25%     |       1.00       |
-| KV-2bit |   12.5%   |     **0.00**     |
+| Method (family)              | 100% | 25% | 12.5% |
+|------------------------------|:----:|:---:|:-----:|
+| full (baseline)              | 1.00 |  -  |   -   |
+| KIVI-4bit (quantization)     |  -   | 1.00| 1.00  |
+| StreamingLLM (sink+window)   |  -   | 0.00| 0.00  |
+| H2O (heavy-hitter, simplified)|  -  | 0.00| 0.00  |
 
-**Finding:** 8-bit and 4-bit KV quantization are lossless on this task; **2-bit
-collapses** (model emits garbage). This reproduces, at small scale, the well-documented
-2-bit KV fragility (cf. the survey's §4.1.3 and Chen et al. 2025a).
+**Finding:** at these budgets, **quantization (which retains every token) is lossless**,
+while **budget-constrained eviction drops the mid-context needle** and fails retrieval.
+This reproduces, at small scale, the known weakness of accumulated-attention eviction on
+needle-style retrieval that motivates query-aware methods (survey §4.2). It also confirms
+the eviction + position handling is correct: a clean "needle evicted" failure, not garbage.
+
+> Earlier single-family quantization sweep (`eval/smoke_quant.py`) additionally shows the
+> 2-bit cliff: KV-8bit and KV-4bit are lossless, KV-2bit collapses (card in `cards/`).
 
 ---
 

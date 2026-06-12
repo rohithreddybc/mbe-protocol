@@ -394,7 +394,7 @@ REFERENCES = {
     "he2026ampd": ("He et al. 2026",
         "He, W., et al. (2026). Efficient multi-round LLM inference over disaggregated serving (AMPD). arXiv preprint arXiv:2602.14516."),
     "basit2026dualscale": ("Basit et al. 2026",
-        "Basit, O., et al. (2026). DualScale: energy-efficient disaggregated LLM serving via phase-aware placement and DVFS. arXiv preprint."),
+        "Basit, O., Liu, Y., Kong, Z. J., & Hu, Y. C. (2026). BiScale: energy-efficient disaggregated LLM serving via phase-aware placement and DVFS. arXiv preprint arXiv:2602.18755."),
     "wang2026optileak": ("Wang et al. 2026b",
         "Wang, L., et al. (2026). OptiLeak: efficient prompt reconstruction via reinforcement learning in multi-tenant LLM services. arXiv preprint arXiv:2602.20595."),
     "yamamoto2026bitflip": ("Yamamoto et al. 2026",

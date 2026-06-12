@@ -71,7 +71,8 @@ Open a PR adding `cards/<method>_<model>.json`. CI re-renders the card and updat
 third-party data point.
 
 ## Dataset
-Evaluation manifest + result cards on the Hugging Face Hub: https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache
+Evaluation manifest + result cards: https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache
+Live leaderboard (Space): https://huggingface.co/spaces/Rohithreddybc/mbe-leaderboard
 
 ## Cite
 
