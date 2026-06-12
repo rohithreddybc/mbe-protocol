@@ -9,7 +9,7 @@ import json
 import gradio as gr
 from huggingface_hub import HfApi, hf_hub_download
 
-DATASET = "Rohithreddybc/mbe-kv-cache"
+DATASET = "Rohithreddybc/kv-cache-compression-mbe"
 
 
 def load_rows():
@@ -42,12 +42,12 @@ def load_rows():
     return rows or [["(no cards yet)", "", "", "", ""]]
 
 
-with gr.Blocks(title="MBE Leaderboard") as demo:
+with gr.Blocks(title="KV Cache Compression Leaderboard (MBE)") as demo:
     gr.Markdown(
-        "# MBE Leaderboard — KV Cache Compression\n"
+        "# KV Cache Compression Leaderboard — Matched-Budget Evaluation (MBE)\n"
         "Matched-Budget Evaluation: methods compared at fixed KV-memory budgets. "
         "Cards are pulled live from "
-        "[`Rohithreddybc/mbe-kv-cache`](https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache). "
+        "[`Rohithreddybc/kv-cache-compression-mbe`](https://huggingface.co/datasets/Rohithreddybc/kv-cache-compression-mbe). "
         "Submit your own via the [GitHub repo](https://github.com/rohithreddybc/mbe-protocol). "
         "**Compare within a (model, budget) group only.**")
     table = gr.Dataframe(

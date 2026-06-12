@@ -8,12 +8,12 @@ into a chat):
     huggingface-cli login        # paste a WRITE token from https://huggingface.co/settings/tokens
 
 Then:
-    python upload.py             # creates rohithreddybc/mbe-kv-cache and uploads this folder
+    python upload.py             # creates rohithreddybc/kv-cache-compression-mbe and uploads this folder
 """
 import os
 from huggingface_hub import HfApi, create_repo
 
-REPO_ID = os.environ.get("MBE_HF_REPO", "rohithreddybc/mbe-kv-cache")
+REPO_ID = os.environ.get("MBE_HF_REPO", "rohithreddybc/kv-cache-compression-mbe")
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 def main():

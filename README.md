@@ -71,8 +71,8 @@ Open a PR adding `cards/<method>_<model>.json`. CI re-renders the card and updat
 third-party data point.
 
 ## Dataset
-Evaluation manifest + result cards: https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache
-Live leaderboard (Space): https://huggingface.co/spaces/Rohithreddybc/mbe-leaderboard
+Evaluation manifest + result cards: https://huggingface.co/datasets/Rohithreddybc/kv-cache-compression-mbe
+Live leaderboard (Space): https://huggingface.co/spaces/Rohithreddybc/kv-cache-compression-leaderboard
 
 ## Cite
 
@@ -86,4 +86,4 @@ Code: Apache-2.0. Protocol specification and cards: CC-BY-4.0.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rohithreddybc/mbe-protocol/blob/main/colab/MBE_seed_run.ipynb)
 
-Run **your** KV cache compression method under MBE on a free Colab GPU and get a citable KV Compression Card: open the notebook, paste one `compress()` function, run all. No local setup. Built-in baselines (KIVI, StreamingLLM, H2O) are included for comparison, and the notebook prints the BibTeX to cite. Submit your card to appear on the [leaderboard](https://huggingface.co/spaces/Rohithreddybc/mbe-leaderboard).
+Run **your** KV cache compression method under MBE on a free Colab GPU and get a citable KV Compression Card: open the notebook, paste one `compress()` function, run all. No local setup. Built-in baselines (KIVI, StreamingLLM, H2O) are included for comparison, and the notebook prints the BibTeX to cite. Submit your card to appear on the [leaderboard](https://huggingface.co/spaces/Rohithreddybc/kv-cache-compression-leaderboard).

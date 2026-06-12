@@ -24,18 +24,18 @@ tags:
 
 A live leaderboard for **Matched-Budget Evaluation (MBE)** of KV cache compression
 methods. It renders the KV Compression Cards from the dataset
-[`Rohithreddybc/mbe-kv-cache`](https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache),
+[`Rohithreddybc/kv-cache-compression-mbe`](https://huggingface.co/datasets/Rohithreddybc/kv-cache-compression-mbe),
 updating as new cards are submitted.
 
 ## Deploy
 1. Create a Space at huggingface.co/new-space (SDK: **Gradio**), named e.g.
-   `Rohithreddybc/mbe-leaderboard`.
+   `Rohithreddybc/kv-cache-compression-leaderboard`.
 2. Push this folder (`app.py`, `README.md`, `requirements.txt`):
    ```bash
-   huggingface-cli upload Rohithreddybc/mbe-leaderboard . . --repo-type=space
+   huggingface-cli upload Rohithreddybc/kv-cache-compression-leaderboard . . --repo-type=space
    ```
 3. The Space builds automatically and pulls cards live from the dataset.
 
 ## Links
 - Protocol + harness: https://github.com/rohithreddybc/mbe-protocol
-- Dataset: https://huggingface.co/datasets/Rohithreddybc/mbe-kv-cache
+- Dataset: https://huggingface.co/datasets/Rohithreddybc/kv-cache-compression-mbe
