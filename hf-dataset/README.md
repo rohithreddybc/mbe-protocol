@@ -4,14 +4,22 @@ language:
   - en
 tags:
   - kv-cache
+  - kv-cache-compression
   - llm-inference
-  - efficiency
-  - evaluation-protocol
+  - inference-efficiency
+  - efficient-inference
   - long-context
+  - quantization
+  - kv-cache-quantization
+  - kv-cache-eviction
   - benchmark
+  - leaderboard
+  - evaluation-protocol
+  - large-language-models
+  - transformers
 task_categories:
   - text-generation
-pretty_name: Matched-Budget Evaluation (MBE) for KV Cache Compression
+pretty_name: "KV Cache Compression Benchmark — Matched-Budget Evaluation (MBE)"
 size_categories:
   - n<1K
 configs:

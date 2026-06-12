@@ -1,5 +1,5 @@
 ---
-title: MBE Leaderboard
+title: "KV Cache Compression Leaderboard (MBE)"
 emoji: 📊
 colorFrom: indigo
 colorTo: red
@@ -9,6 +9,15 @@ app_file: app.py
 python_version: "3.12"
 pinned: false
 license: cc-by-4.0
+tags:
+  - kv-cache
+  - kv-cache-compression
+  - llm-inference
+  - inference-efficiency
+  - long-context
+  - quantization
+  - benchmark
+  - leaderboard
 ---
 
 # MBE Leaderboard
