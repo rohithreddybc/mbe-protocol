@@ -58,6 +58,10 @@ again. **Llama is gated:** you must first request access on its HF model page an
 `from huggingface_hub import login; login()` with your token in a cell. Qwen needs none.
 
 ## Troubleshooting
+- **`AttributeError` on the cache / transformers version:** cell 1 pins
+  `transformers>=4.44,<5.0` on purpose — transformers 5.x changed the KV-cache API. If you
+  edit cell 1, keep that pin. (The harness also handles both versions defensively, but the
+  pin is the tested path.)
 - **Out-of-memory (CUDA OOM):** set `MBE_SKIP_H2O = '1'` in the Option B cell (H2O needs
   the most memory), or switch the model to `Qwen/Qwen2.5-3B-Instruct`.
 - **"No GPU" / very slow:** you didn't enable the T4 (Step 2), or Colab gave you a CPU

@@ -72,6 +72,39 @@ def make_sample(i, n_fillers=45):
     return key, msg
 
 
+def to_legacy(pkv):
+    """List of (key, value) tensors per layer, robust across transformers 4.x and 5.x.
+    (4.x exposes Cache.to_legacy_cache(); 5.x removed it and keeps key_cache/value_cache
+    lists or a .layers list.)"""
+    if pkv is None:
+        return []
+    if hasattr(pkv, "to_legacy_cache"):
+        try:
+            return list(pkv.to_legacy_cache())
+        except Exception:
+            pass
+    if hasattr(pkv, "key_cache") and hasattr(pkv, "value_cache"):
+        return [(k, v) for k, v in zip(pkv.key_cache, pkv.value_cache)]
+    if hasattr(pkv, "layers"):
+        return [(getattr(l, "keys", getattr(l, "key", None)),
+                 getattr(l, "values", getattr(l, "value", None))) for l in pkv.layers]
+    return list(pkv)
+
+
+def from_legacy(legacy):
+    """Build a cache the model can consume, robust across transformers 4.x and 5.x."""
+    legacy = tuple(legacy)
+    if hasattr(DynamicCache, "from_legacy_cache"):
+        try:
+            return DynamicCache.from_legacy_cache(legacy)
+        except Exception:
+            pass
+    c = DynamicCache()
+    for i, (k, v) in enumerate(legacy):
+        c.update(k, v, i)
+    return c
+
+
 def quantize_cache(cache, bits=4):
     qmax = 2 ** (bits - 1) - 1
     out = []
@@ -120,7 +153,7 @@ def run(model, tok, method, budget, user_compress=None):
         ids = ids.to(model.device)
         seqlen = ids.shape[1]
         out = model(ids, use_cache=True, output_attentions=need_attn)
-        legacy = list(out.past_key_values.to_legacy_cache())
+        legacy = list(to_legacy(out.past_key_values))
 
         if method == "kivi-4bit":
             legacy = list(quantize_cache(legacy, 4))
@@ -139,7 +172,7 @@ def run(model, tok, method, budget, user_compress=None):
             idx = select_indices(method, seqlen, budget, imp).to(model.device)
             legacy = list(evict_cache(legacy, idx))
 
-        cache = DynamicCache.from_legacy_cache(tuple(legacy))
+        cache = from_legacy(legacy)
         next_id = out.logits[:, -1].argmax(-1, keepdim=True)
         gen = [next_id.item()]
         pos = seqlen                                 # TRUE position of first generated token
