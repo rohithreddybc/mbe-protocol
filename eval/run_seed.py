@@ -105,19 +105,39 @@ def from_legacy(legacy):
     return c
 
 
-def quantize_cache(cache, bits=4):
-    # Scales/rounding are computed in float32: a 1e-8 epsilon underflows to 0 in fp16
-    # (used by 4-bit/GPU models), which would make zero-max channels produce NaN.
+def quantize_cache(cache, bits=4, sink=4, recent=32):
+    """KIVI-style fake-quant with a full-precision residual.
+
+    Keys are quantized per channel (scale over the sequence), values per token.
+    The first `sink` tokens (attention sink) and the last `recent` tokens are kept
+    in full precision -- this is the standard KIVI residual and is essential at
+    scale: large models place massive activations on the sink token, so quantizing
+    it blows up the per-channel key scale and destroys 4-bit resolution for every
+    other token (this is why a naive all-token quant returns ~0 on a 7-8B model
+    while passing on a 0.5B one). Scales are computed in float32; a small epsilon
+    underflows in fp16. The needle in the passkey task sits in the middle, so it is
+    still quantized -- the residual fixes the outlier blow-up, it does not hide the
+    needle behind a full-precision window."""
     qmax = 2 ** (bits - 1) - 1
     out = []
     for k, v in cache:
-        kf = k.float()
-        ks = kf.abs().amax(dim=2, keepdim=True).clamp_min(1e-5) / qmax
-        kq = (torch.round(kf / ks).clamp(-qmax - 1, qmax) * ks).to(k.dtype)
-        vf = v.float()
-        vs = vf.abs().amax(dim=3, keepdim=True).clamp_min(1e-5) / qmax
-        vq = (torch.round(vf / vs).clamp(-qmax - 1, qmax) * vs).to(v.dtype)
-        out.append((kq, vq))
+        seq = k.shape[2]
+        lo = min(sink, seq)
+        hi = max(lo, seq - recent)
+        kq, vq = k.float().clone(), v.float().clone()
+        if hi > lo:
+            km = kq[:, :, lo:hi, :].clone()
+            ks = km.abs().amax(dim=2, keepdim=True).clamp_min(1e-5) / qmax   # per channel
+            kq[:, :, lo:hi, :] = torch.round(km / ks).clamp(-qmax - 1, qmax) * ks
+            vm = vq[:, :, lo:hi, :].clone()
+            vs = vm.abs().amax(dim=3, keepdim=True).clamp_min(1e-5) / qmax   # per token
+            vq[:, :, lo:hi, :] = torch.round(vm / vs).clamp(-qmax - 1, qmax) * vs
+        if os.environ.get("MBE_DEBUG") == "1" and len(out) == 0:
+            bad = int(torch.isnan(kq).sum() + torch.isinf(kq).sum() +
+                      torch.isnan(vq).sum() + torch.isinf(vq).sum())
+            print(f"    [debug] layer0 seq={seq} keep=[{lo},{hi}) |k|max={k.abs().max().item():.3g} "
+                  f"|v|max={v.abs().max().item():.3g} quant_nan_inf={bad}", flush=True)
+        out.append((kq.to(k.dtype), vq.to(v.dtype)))
     return tuple(out)
 
 

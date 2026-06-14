@@ -1,0 +1,36 @@
+{
+  "harness_version": "mbe-0.2.0",
+  "run_type": "CPU seed run across families",
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "task": "passkey retrieval (synthetic, single needle)",
+  "n_samples": 8,
+  "hardware": "cpu / float32",
+  "families": "quantization (KIVI) + eviction (StreamingLLM sink+window, H2O heavy-hitter)",
+  "results": [
+    {
+      "method": "full",
+      "kv_budget": "100%",
+      "passkey_acc": 1.0
+    },
+    {
+      "method": "kivi-4bit",
+      "kv_budget": "25.0%",
+      "passkey_acc": 1.0
+    },
+    {
+      "method": "kivi-4bit",
+      "kv_budget": "12.5%",
+      "passkey_acc": 1.0
+    },
+    {
+      "method": "streaming",
+      "kv_budget": "25.0%",
+      "passkey_acc": 0.0
+    },
+    {
+      "method": "streaming",
+      "kv_budget": "12.5%",
+      "passkey_acc": 0.0
+    }
+  ]
+}
