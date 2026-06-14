@@ -106,14 +106,18 @@ def from_legacy(legacy):
 
 
 def quantize_cache(cache, bits=4):
+    # Scales/rounding are computed in float32: a 1e-8 epsilon underflows to 0 in fp16
+    # (used by 4-bit/GPU models), which would make zero-max channels produce NaN.
     qmax = 2 ** (bits - 1) - 1
     out = []
     for k, v in cache:
-        ks = k.abs().amax(dim=2, keepdim=True).clamp_min(1e-8) / qmax
-        kq = torch.round(k / ks).clamp(-qmax - 1, qmax) * ks
-        vs = v.abs().amax(dim=3, keepdim=True).clamp_min(1e-8) / qmax
-        vq = torch.round(v / vs).clamp(-qmax - 1, qmax) * vs
-        out.append((kq.to(k.dtype), vq.to(v.dtype)))
+        kf = k.float()
+        ks = kf.abs().amax(dim=2, keepdim=True).clamp_min(1e-5) / qmax
+        kq = (torch.round(kf / ks).clamp(-qmax - 1, qmax) * ks).to(k.dtype)
+        vf = v.float()
+        vs = vf.abs().amax(dim=3, keepdim=True).clamp_min(1e-5) / qmax
+        vq = (torch.round(vf / vs).clamp(-qmax - 1, qmax) * vs).to(v.dtype)
+        out.append((kq, vq))
     return tuple(out)
 
 

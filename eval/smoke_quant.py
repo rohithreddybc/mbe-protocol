@@ -40,11 +40,12 @@ def quantize_cache(cache, bits):
     qmax = 2 ** (bits - 1) - 1
     out = []
     for k, v in cache:
-        # k,v: [b, n_kv_heads, seq, head_dim]
-        ks = k.abs().amax(dim=2, keepdim=True).clamp_min(1e-8) / qmax     # per-channel
-        kq = torch.round(k / ks).clamp(-qmax - 1, qmax) * ks
-        vs = v.abs().amax(dim=3, keepdim=True).clamp_min(1e-8) / qmax     # per-token
-        vq = torch.round(v / vs).clamp(-qmax - 1, qmax) * vs
+        # k,v: [b, n_kv_heads, seq, head_dim]; compute in fp32 (1e-8 underflows in fp16)
+        kf, vf = k.float(), v.float()
+        ks = kf.abs().amax(dim=2, keepdim=True).clamp_min(1e-5) / qmax     # per-channel
+        kq = torch.round(kf / ks).clamp(-qmax - 1, qmax) * ks
+        vs = vf.abs().amax(dim=3, keepdim=True).clamp_min(1e-5) / qmax     # per-token
+        vq = torch.round(vf / vs).clamp(-qmax - 1, qmax) * vs
         out.append((kq.to(k.dtype), vq.to(v.dtype)))
     return tuple(out)
 
