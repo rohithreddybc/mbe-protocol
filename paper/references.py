@@ -397,8 +397,6 @@ REFERENCES = {
         "Basit, O., Liu, Y., Kong, Z. J., & Hu, Y. C. (2026). BiScale: energy-efficient disaggregated LLM serving via phase-aware placement and DVFS. arXiv preprint arXiv:2602.18755."),
     "wang2026optileak": ("Wang et al. 2026b",
         "Wang, L., et al. (2026). OptiLeak: efficient prompt reconstruction via reinforcement learning in multi-tenant LLM services. arXiv preprint arXiv:2602.20595."),
-    "yamamoto2026bitflip": ("Yamamoto et al. 2026",
-        "Yamamoto, Y., et al. (2026). Bit-flip vulnerability of shared KV-cache blocks in LLM serving systems. arXiv preprint."),
     "wang2026latencydos": ("Wang et al. 2026c",
         "Wang, T., et al. (2026). Rethinking latency denial-of-service: attacking the LLM serving framework, not the model. arXiv preprint arXiv:2602.07878."),
     "zhang2026actmem": ("Zhang et al. 2026",

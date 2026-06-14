@@ -30,7 +30,7 @@ likely criticism, where the manuscript already addresses it, and the response if
   supplementary material.
 
 ### 5. "Reference count below a comprehensive survey norm."
-- **Response:** 198 references, current through June 2026 (20 from 2026), covering
+- **Response:** 208 references, current through June 2026 (21 from 2026), covering
   quantization, eviction, merging, low-rank, learned, architectural, system,
   transport, hardware, security, agentic, and evaluation. We can extend specific
   families on request.

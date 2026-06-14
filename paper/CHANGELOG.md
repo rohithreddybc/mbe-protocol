@@ -8,7 +8,7 @@ manuscript (target venue: *Artificial Intelligence Review*, Springer).
 | | Initial draft | Current |
 |---|---|---|
 | Title | "...A *Comprehensive Review* of KV Cache Compression and Architecture..." | "...A *Survey* of *Key-Value (KV) Cache Compression* for *Efficient... (LLM) Inference*" |
-| References | 98 numbered `[n]`, **~37 fabricated** (fake authors + future arXiv IDs) | **209 real, verified** (1 ID unresolved), Springer author–year |
+| References | 98 numbered `[n]`, **~37 fabricated** (fake authors + future arXiv IDs) | **208 real, verified** (all with locatable IDs/venues), Springer author–year |
 | Length / sections | ~9,000 words, no front/back matter | ~16,700 words, **11 sections**, ~38 pages |
 | Tables / figures | **0 / 0** | **6 tables, 4 figures + graphical abstract** (each with a *Takeaway*) |
 | Abstract / keywords / methodology / declarations | none | all present (abstract 248 w, PRISMA flow, full declarations) |
@@ -18,7 +18,7 @@ manuscript (target venue: *Artificial Intelligence Review*, Springer).
 
 1. **Citation integrity (was a desk-reject risk).** ~37 of 98 citations in the draft were
    fabricated (generic author names + non-existent future-dated arXiv IDs). The
-   bibliography was rebuilt to **209 real, verifiable references**, each cited in the text
+   bibliography was rebuilt to **208 real, verifiable references**, each cited in the text
    (0 orphans), in Springer SPBASIC author–year style. Smart-quote encoding artifacts
    were fixed throughout.
 2. **Venue-standard apparatus added** (none existed): abstract + keywords, a **PRISMA

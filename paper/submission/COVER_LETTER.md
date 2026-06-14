@@ -39,9 +39,9 @@ knowledge, unique to this survey:
    in this area proposes an evaluation protocol; we convert the field's
    benchmarking critique into an adoptable artifact.
 
-The manuscript is ~15,500 words with 198 references (current through June 2026),
-six tables, and three figures, and includes a survey methodology with a PRISMA-style
-flow, a limitations section, and full declarations.
+The manuscript is ~16,400 words with 208 references (current through June 2026),
+six tables, and four figures (plus a graphical abstract), and includes a survey
+methodology with a PRISMA-style flow, a limitations section, and full declarations.
 
 **Originality and ethics.** This work is original, has not been published elsewhere,
 and is not under consideration by another journal. A preprint will be posted to

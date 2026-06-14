@@ -319,11 +319,11 @@ P("Sources were identified through three complementary channels, with a search "
   "widely adopted methods. Figure 1 summarises the selection flow: approximately 612 "
   "candidate records were identified, reduced to about 318 after de-duplication and "
   "title screening, about 206 assessed in full text for eligibility and venue "
-  "quality, and 178 retained for detailed analysis and inclusion. The counts are "
+  "quality, and 177 retained for detailed analysis and inclusion. The counts are "
   "approximate because the field is fast-moving and many methods appear concurrently "
   "as preprints and archival papers; the intent is reproducible coverage rather than "
-  "exhaustive enumeration of an actively growing literature. Of the 209 references in "
-  "this survey, 178 are KV-cache methods or systems analysed in depth; the remaining "
+  "exhaustive enumeration of an actively growing literature. Of the 208 references in "
+  "this survey, 177 are KV-cache methods or systems analysed in depth; the remaining "
   "31 are seminal or background works (for example, foundational attention, the "
   "memory wall, and the competing surveys) cited for context.")
 try:
@@ -332,7 +332,7 @@ try:
     pcap = doc.add_paragraph()
     pr = pcap.add_run("Fig. 1. PRISMA-style flow of identification, screening, and "
                       "inclusion for the survey (counts approximate). Takeaway: coverage is "
-                      "reproducible and selective, 178 KV-cache works analysed in depth out of "
+                      "reproducible and selective, 177 KV-cache works analysed in depth out of "
                       "roughly 612 screened.")
     pr.bold = True; pr.font.size = Pt(9)
     pcap.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -822,10 +822,9 @@ P("Prefix sharing improves efficiency but weakens tenant isolation, and a growin
   f"cache contents ({C['luo2025shadow']}), all of which trade some sharing benefit "
   "for provable isolation. The threat surface continues to widen in 2026: "
   f"reinforcement-learned attacks reconstruct prompts far more cheaply than earlier "
-  f"work suggested ({C['wang2026optileak']}), shared prefix blocks are vulnerable to "
-  f"Rowhammer-style bit-flips with silent, persistent corruption ({C['yamamoto2026bitflip']}), "
-  f"and the KV cache itself becomes a lever for latency denial-of-service that exhausts "
-  f"the global cache to induce head-of-line blocking ({C['wang2026latencydos']}). "
+  f"work suggested ({C['wang2026optileak']}), and the KV cache itself becomes a lever "
+  f"for latency denial-of-service that exhausts the global cache to induce "
+  f"head-of-line blocking ({C['wang2026latencydos']}). "
   "Table 2 organises the reported threats and mitigations. "
   "We treat security as a first-class design axis rather than an afterthought, since "
   "it directly constrains how aggressively prefix sharing can be deployed and, as "

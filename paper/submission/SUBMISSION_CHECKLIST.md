@@ -11,7 +11,7 @@ anonymous.4open.science mirror.)
 - [x] Title with primary search keywords ("KV cache", "LLM inference", "survey").
 - [x] Abstract **248 words** (within the 150–250 limit), no undefined abbreviations.
 - [x] Keywords (7) provided.
-- [x] Springer **SPBASIC author–year** citations; alphabetical reference list; 198 refs.
+- [x] Springer **SPBASIC author–year** citations; alphabetical reference list; 208 refs.
 - [x] Numbered sections 1–11; Review Methodology (§2) with PRISMA-style flow (Fig. 1).
 - [x] Limitations / threats-to-validity subsection (§10.5).
 - [x] Declarations: funding, competing interests, data availability (with repo URL),
